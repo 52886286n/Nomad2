@@ -16,10 +16,30 @@ Die Ports überschneiden sich nicht mit Project N.O.M.A.D., beides kann nebenein
 
 ## Einrichten (Debian/Ubuntu/Mint)
 
+**Docker ist schon installiert** (z. B. weil Project N.O.M.A.D. läuft)? Dann auf keinen Fall
+`docker.io` nachinstallieren – das verdrängt das vorhandene Docker. Es fehlen nur die Hilfsprogramme:
+
+```bash
+sudo apt install curl wget ffmpeg git
+```
+
+**Noch kein Docker vorhanden** (`docker --version` meldet „nicht gefunden“):
+
 ```bash
 sudo apt install docker.io docker-compose-v2 curl wget ffmpeg git
-sudo usermod -aG docker $USER      # danach einmal ab- und wieder anmelden
-git clone https://github.com/52886286n/Nomad2.git && cd Nomad2
+```
+
+Danach in beiden Fällen:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Einmal ab- und wieder anmelden, dann:
+
+```bash
+git clone https://github.com/52886286n/Nomad2.git
+cd Nomad2
 ./nomad start
 ```
 
