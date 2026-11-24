@@ -3,11 +3,14 @@
 Ein eigenes, schlankes „Project N.O.M.A.D.“ auf Deutsch: deutsche Wikis und deutsche
 Videos, komplett offline nutzbar – auf dem Laptop selbst und für alle Geräte im selben WLAN.
 
-| Dienst     | Adresse                 | Software                    |
-|------------|-------------------------|-----------------------------|
-| Startseite | http://localhost:8880   | nginx (deutsche Übersicht)  |
-| Wikis      | http://localhost:8881   | Kiwix                       |
-| Videos     | http://localhost:8096   | Jellyfin                    |
+Alles ist auf Deutsch, es gibt keine Anmeldung, keinen Einrichtungsassistenten und keine KI –
+nur zwei kleine Dienste (nginx und Kiwix), die auch auf schwacher Hardware laufen.
+
+| Dienst     | Adresse                        |
+|------------|--------------------------------|
+| Startseite | http://localhost:8880          |
+| Videos     | http://localhost:8880/videos   |
+| Wikis      | http://localhost:8881 (Kiwix, Oberfläche folgt der Browsersprache) |
 
 Die Ports überschneiden sich nicht mit Project N.O.M.A.D., beides kann nebeneinander laufen.
 
@@ -36,15 +39,20 @@ Pakete trägst du als Zeile in `inhalte/katalog.txt` ein.
 
 1. Adressen in `inhalte/videos.txt` eintragen (YouTube-Kanäle/-Playlists, ARD-/ZDF-/arte-Mediathek).
 2. `./nomad videos laden` – lädt nur, was noch fehlt, sortiert nach Kanal.
-3. Beim ersten Öffnen von http://localhost:8096 in Jellyfin: Sprache **Deutsch** wählen,
-   Benutzer anlegen und eine Bibliothek vom Typ „Heimvideos und Fotos“ mit dem Ordner
-   `/media/videos` hinzufügen.
+3. http://localhost:8880/videos öffnen: Suche, Kanalfilter und Player direkt im Browser.
+
+Eigene Videodateien (MP4) kannst du einfach in einen Unterordner von `daten/videos/` legen,
+sie erscheinen sofort auf der Videoseite.
 
 Bitte nur Inhalte laden, die du privat offline speichern darfst.
 
-## Einstellungen
+## Speicherort und Einstellungen
 
-In `.env` (wird beim ersten Start aus `.env.example` angelegt): Ports, Videoqualität und
-`DATEN` – der Speicherort, z. B. eine externe Platte (`DATEN=/media/platte/nomad2`).
+```bash
+./nomad speicher                       # zeigt, wo die Inhalte liegen
+./nomad speicher /media/platte/nomad2  # z. B. auf eine externe Platte wechseln
+./nomad status                         # Adressen und freier Speicherplatz
+```
 
-`./nomad status` zeigt Adressen und freien Speicherplatz, `./nomad stop` beendet alles.
+Vor jedem Wiki-Download wird geprüft, ob der Platz reicht. Ports und Videoqualität stehen in
+`.env` (wird beim ersten Start aus `.env.example` angelegt). `./nomad stop` beendet alles.

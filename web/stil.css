@@ -1,0 +1,37 @@
+:root { --bg:#f4f1ea; --fg:#1d2420; --card:#fff; --line:#d9d3c5; --akzent:#2f6b4f; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#151a17; --fg:#e8e6df; --card:#1e2521; --line:#323c36; --akzent:#7fc7a2; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.5 system-ui, sans-serif; }
+main { max-width:1100px; margin:0 auto; padding:40px 16px; }
+main.schmal { max-width:760px; }
+h1 { font-size:2rem; margin:0 0 4px; }
+p.unter { margin:0 0 28px; opacity:.75; }
+a { color:var(--akzent); }
+code { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:1px 5px; }
+footer { margin-top:40px; font-size:.85rem; opacity:.65; }
+.karten { display:grid; gap:16px; align-items:start; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); }
+.karte { display:block; background:var(--card); border:1px solid var(--line); border-radius:12px;
+         color:inherit; text-decoration:none; overflow:hidden; text-align:left; font:inherit;
+         padding:0; cursor:pointer; width:100%; }
+.karte:hover, .karte:focus-visible { border-color:var(--akzent); outline:none; }
+.karte .text { padding:14px 16px; }
+.karte.gross .text { padding:24px; }
+.karte h2 { margin:0 0 6px; font-size:1.25rem; color:var(--akzent); }
+.karte h3 { margin:0 0 4px; font-size:1rem; line-height:1.3; overflow-wrap:anywhere; }
+.karte p { margin:0; opacity:.75; font-size:.9rem; }
+.karte img, .karte .ohnebild { display:block; width:100%; aspect-ratio:16/9; object-fit:cover; background:var(--line); }
+.leiste { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 20px; align-items:center; }
+.leiste input { flex:1 1 220px; padding:10px 12px; font:inherit; color:inherit; background:var(--card);
+                border:1px solid var(--line); border-radius:8px; }
+.chip { padding:6px 12px; border-radius:999px; border:1px solid var(--line); background:var(--card);
+        color:inherit; font:inherit; font-size:.9rem; cursor:pointer; }
+.chip[aria-pressed=true] { background:var(--akzent); border-color:var(--akzent); color:var(--bg); }
+#spieler { position:fixed; inset:0; background:rgba(0,0,0,.88); display:none; flex-direction:column;
+           align-items:center; justify-content:center; padding:16px; z-index:10; }
+#spieler.offen { display:flex; }
+#spieler video { max-width:100%; max-height:80vh; background:#000; border-radius:8px; }
+#spieler h2 { color:#fff; font-size:1.05rem; margin:12px 0 0; text-align:center; overflow-wrap:anywhere; }
+#spieler button { position:absolute; top:12px; right:12px; font:inherit; padding:8px 14px; border-radius:8px;
+                  border:0; cursor:pointer; }

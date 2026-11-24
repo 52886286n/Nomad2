@@ -18,7 +18,7 @@ info() { printf '\033[32m==>\033[0m %s\n' "$*"; }
 ende() { rot "Fehler: $*"; exit 1; }
 braucht() { command -v "$1" >/dev/null || ende "'$1' fehlt. Installiere es mit: sudo apt install $2"; }
 
-ordner() { mkdir -p "$ZIM" "$VID" "$DATEN/jellyfin/config" "$DATEN/jellyfin/cache"; }
+ordner() { mkdir -p "$ZIM" "$VID"; }
 
 # Katalogzeile zu einem Namen: gibt "ordner|präfix|größe|beschreibung" aus
 eintrag() {
@@ -47,6 +47,26 @@ bibliothek() {
     mv /data/library.neu /data/library.xml'
 }
 
+# Prüft, ob die Datei (abzüglich eines schon geladenen Teils) noch auf die Platte passt
+platz_reicht() { # url teildatei
+  local gross frei teil=0
+  gross=$(curl -fsSIL "$1" 2>/dev/null | tr -d '\r' | awk 'tolower($1)=="content-length:" { n=$2 } END { print n+0 }')
+  [ "${gross:-0}" -gt 0 ] || return 0   # Größe unbekannt: nicht blockieren
+  [ -f "$2" ] && teil=$(stat -c %s "$2")
+  frei=$(df --output=avail -B1 "$ZIM" | tail -n 1)
+  [ $((gross - teil + 1073741824)) -le "$frei" ]   # 1 GB Reserve
+}
+
+# Speicherort für alle Inhalte ändern (z. B. externe Platte)
+speicher() {
+  [ $# -eq 1 ] || { echo "Aktueller Speicherort: $(readlink -f "$DATEN")"; echo "Ändern mit: ./nomad speicher <ordner>"; return; }
+  local neu; mkdir -p "$1" || ende "Ordner $1 kann nicht angelegt werden."
+  neu=$(readlink -f "$1"); [ -w "$neu" ] || ende "In $neu darf nicht geschrieben werden."
+  if grep -q '^DATEN=' .env; then sed -i "s|^DATEN=.*|DATEN=$neu|" .env; else echo "DATEN=$neu" >> .env; fi
+  info "Speicherort ist jetzt $neu"
+  echo "Vorhandene Inhalte ziehst du so um:  ./nomad stop && mv $(readlink -f "$DATEN")/* $neu/ && ./nomad start"
+}
+
 wiki_liste() {
   printf '%-16s %-8s %-12s %s\n' NAME GRÖSSE STATUS BESCHREIBUNG
   grep -v '^[[:space:]]*#' "$KATALOG" | while IFS='|' read -r n _ p g b; do
@@ -67,6 +87,7 @@ wiki_laden() {
     datei=$(neueste "$o" "$p") || true
     [ -n "$datei" ] || { rot "$n: keine Datei auf dem Server gefunden ($o/$p)"; continue; }
     if [ -f "$ZIM/$datei" ]; then info "$n ist aktuell ($datei)"; continue; fi
+    platz_reicht "$SPIEGEL/$o/$datei" "$ZIM/$datei.teil" || { rot "$n: zu wenig freier Speicher in $ZIM – übersprungen. Anderen Speicherort wählen: ./nomad speicher <ordner>"; continue; }
     info "Lade $n: $datei ($(echo "$e" | cut -d'|' -f3)) – Abbruch mit Strg+C, später einfach erneut starten"
     wget -c --tries=20 --show-progress -q -O "$ZIM/$datei.teil" "$SPIEGEL/$o/$datei"
     mv "$ZIM/$datei.teil" "$ZIM/$datei"
@@ -125,7 +146,7 @@ videos_laden() {
       "$url" </dev/null || rot "Nicht alles von $url konnte geladen werden."
   done < "$QUELLEN"
   [ $ok = 1 ] || ende "Keine Quellen eingetragen. Trage Adressen in $QUELLEN ein."
-  info "Fertig. Videos: http://localhost:${PORT_VIDEOS:-8096} (Jellyfin liest neue Videos automatisch ein)"
+  info "Fertig. Videos: http://localhost:${PORT_START:-8880}/videos"
 }
 
 status() {
@@ -133,7 +154,7 @@ status() {
   echo
   echo "Startseite: http://localhost:${PORT_START:-8880}"
   echo "Wikis:      http://localhost:${PORT_WIKI:-8881}"
-  echo "Videos:     http://localhost:${PORT_VIDEOS:-8096}"
+  echo "Videos:     http://localhost:${PORT_START:-8880}/videos"
   echo
   [ -d "$DATEN" ] && du -sh "$ZIM" "$VID" 2>/dev/null
   df -h "$DATEN" 2>/dev/null | awk 'NR==2 { print "Frei auf der Platte: " $4 }'
@@ -152,6 +173,8 @@ Nomad2 – Offline-Wissen auf Deutsch
   ./nomad wiki entfernen <name>    Paket löschen
 
   ./nomad videos laden             Videos aus inhalte/videos.txt herunterladen
+
+  ./nomad speicher [<ordner>]      Speicherort anzeigen oder ändern (z. B. externe Platte)
 H
 }
 
@@ -160,6 +183,7 @@ case "${1:-hilfe}" in
           docker compose up -d; status ;;
   stop)   docker compose down ;;
   status) status ;;
+  speicher) shift; speicher "$@" ;;
   wiki)   case "${2:-liste}" in
             liste) wiki_liste ;;
             laden) shift 2; wiki_laden "$@" ;;

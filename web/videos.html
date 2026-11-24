@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Videos – Nomad2</title>
+<link rel="stylesheet" href="/stil.css">
+</head>
+<body>
+<main>
+  <p><a href="/">← Startseite</a></p>
+  <h1>Videos</h1>
+  <p class="unter" id="anzahl">Wird geladen …</p>
+  <div class="leiste"><input id="suche" type="search" placeholder="Videos durchsuchen …" aria-label="Videos durchsuchen"></div>
+  <div class="leiste" id="kanaele"></div>
+  <div class="karten" id="liste"></div>
+</main>
+<div id="spieler" role="dialog" aria-modal="true" aria-label="Videoplayer">
+  <button id="zu">Schließen ✕</button>
+  <video id="film" controls playsinline></video>
+  <h2 id="filmtitel"></h2>
+</div>
+<script>
+const VIDEO = /\.(mp4|m4v|webm|mkv|mov)$/i, BILD = /\.(jpe?g|png|webp)$/i;
+const pfad = (...t) => '/medien/' + t.map(encodeURIComponent).join('/');
+const liste = document.getElementById('liste'), kanaele = document.getElementById('kanaele');
+const suche = document.getElementById('suche'), anzahl = document.getElementById('anzahl');
+let videos = [], kanal = null;
+
+async function ordner(url) {
+  const r = await fetch(url, { cache: 'no-store' });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+function einlesen(kanalname, dateien) {
+  const bilder = new Map();
+  for (const d of dateien) if (d.type === 'file' && BILD.test(d.name)) bilder.set(d.name.replace(BILD, ''), d.name);
+  for (const d of dateien) {
+    if (d.type !== 'file' || !VIDEO.test(d.name)) continue;
+    const basis = d.name.replace(VIDEO, '');
+    const m = basis.match(/^(\d{4})-(\d{2})-(\d{2}) (.*)$/);
+    const titel = (m ? m[4] : basis).replace(/ \[[^\]]+\]$/, '').trim();
+    videos.push({
+      kanal: kanalname, titel, datum: m ? `${m[3]}.${m[2]}.${m[1]}` : '', sortierung: m ? m[1] + m[2] + m[3] : '',
+      datei: kanalname ? pfad(kanalname, d.name) : pfad(d.name),
+      bild: bilder.has(basis) ? (kanalname ? pfad(kanalname, bilder.get(basis)) : pfad(bilder.get(basis))) : null,
+    });
+  }
+}
+
+function zeichnen() {
+  const q = suche.value.trim().toLowerCase();
+  const treffer = videos.filter(v => (!kanal || v.kanal === kanal) && (!q || (v.titel + ' ' + v.kanal).toLowerCase().includes(q)));
+  liste.replaceChildren(...treffer.map(v => {
+    const k = document.createElement('button'); k.className = 'karte';
+    const b = v.bild ? Object.assign(document.createElement('img'), { src: v.bild, loading: 'lazy', alt: '' })
+                     : Object.assign(document.createElement('div'), { className: 'ohnebild' });
+    const t = document.createElement('div'); t.className = 'text';
+    t.append(Object.assign(document.createElement('h3'), { textContent: v.titel }),
+             Object.assign(document.createElement('p'), { textContent: [v.kanal, v.datum].filter(Boolean).join(' · ') }));
+    k.append(b, t); k.onclick = () => abspielen(v); return k;
+  }));
+  anzahl.textContent = videos.length === 0
+    ? 'Noch keine Videos vorhanden. Trage Adressen in inhalte/videos.txt ein und starte „./nomad videos laden“.'
+    : `${treffer.length} von ${videos.length} Videos`;
+}
+
+function kanalleiste() {
+  const namen = [...new Set(videos.map(v => v.kanal).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de'));
+  if (namen.length < 2) return;
+  kanaele.replaceChildren(...[null, ...namen].map(n => {
+    const c = Object.assign(document.createElement('button'), { className: 'chip', textContent: n ?? 'Alle Kanäle' });
+    c.setAttribute('aria-pressed', n === kanal);
+    c.onclick = () => { kanal = n; kanalleiste(); zeichnen(); };
+    return c;
+  }));
+}
+
+const spieler = document.getElementById('spieler'), film = document.getElementById('film');
+function abspielen(v) {
+  film.src = v.datei; document.getElementById('filmtitel').textContent = v.titel;
+  spieler.classList.add('offen'); film.play().catch(() => {});
+}
+function schliessen() { film.pause(); film.removeAttribute('src'); film.load(); spieler.classList.remove('offen'); }
+document.getElementById('zu').onclick = schliessen;
+spieler.onclick = e => { if (e.target === spieler) schliessen(); };
+document.onkeydown = e => { if (e.key === 'Escape') schliessen(); };
+suche.oninput = zeichnen;
+
+(async () => {
+  try {
+    const wurzel = await ordner('/medien/');
+    einlesen('', wurzel);
+    await Promise.all(wurzel.filter(d => d.type === 'directory').map(async d =>
+      einlesen(d.name, await ordner(pfad(d.name) + '/'))));
+    videos.sort((a, b) => b.sortierung.localeCompare(a.sortierung) || a.titel.localeCompare(b.titel, 'de'));
+    kanalleiste(); zeichnen();
+  } catch (e) {
+    anzahl.textContent = 'Die Videoliste konnte nicht geladen werden (' + e.message + ').';
+  }
+})();
+</script>
+</body>
+</html>

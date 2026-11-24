@@ -1,6 +1,15 @@
 server {
     listen 80;
     root /usr/share/nginx/html;
+    charset utf-8;
+
     location = /wiki   { return 302 http://$host:${PORT_WIKI}/; }
-    location = /videos { return 302 http://$host:${PORT_VIDEOS}/; }
+    location = /videos { try_files /videos.html =404; }
+
+    # Videodateien; die Ordnerliste kommt als JSON und wird von videos.html dargestellt
+    location /medien/ {
+        alias /medien/;
+        autoindex on;
+        autoindex_format json;
+    }
 }
