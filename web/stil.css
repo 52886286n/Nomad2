@@ -1,7 +1,7 @@
-:root { --bg:#f4f1ea; --fg:#1d2420; --card:#fff; --line:#d9d3c5; --akzent:#2f6b4f; }
-@media (prefers-color-scheme: dark) {
-  :root { --bg:#151a17; --fg:#e8e6df; --card:#1e2521; --line:#323c36; --akzent:#7fc7a2; }
-}
+:root { --bg:#151a17; --fg:#e8e6df; --card:#1e2521; --line:#323c36; --akzent:#7fc7a2; color-scheme:dark; }
+:root[data-thema=hell] { --bg:#f4f1ea; --fg:#1d2420; --card:#fff; --line:#d9d3c5; --akzent:#2f6b4f; color-scheme:light; }
+#thema { position:absolute; top:12px; right:16px; font:inherit; font-size:.9rem; padding:6px 12px; cursor:pointer;
+         border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--fg); }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.5 system-ui, sans-serif; }
 main { max-width:1100px; margin:0 auto; padding:40px 16px; }

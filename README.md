@@ -66,6 +66,11 @@ sie erscheinen sofort auf der Videoseite.
 
 Bitte nur Inhalte laden, die du privat offline speichern darfst.
 
+## Dunkles Design
+
+Alles erscheint standardmäßig dunkel – auch die Wiki-Artikel. Mit dem Knopf oben rechts auf der
+Startseite wechselst du zwischen „Hell“ und „Dunkel“; die Wahl gilt für Startseite, Videos und Wikis.
+
 ## Speicherort und Einstellungen
 
 ```bash

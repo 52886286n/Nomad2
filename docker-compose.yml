@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     ports:
       - "${PORT_START:-8880}:80"
+      - "${PORT_WIKI:-8881}:8081"
     environment:
       PORT_WIKI: "${PORT_WIKI:-8881}"
     volumes:
@@ -16,8 +17,6 @@ services:
   wiki:
     image: ghcr.io/kiwix/kiwix-tools:latest
     restart: unless-stopped
-    ports:
-      - "${PORT_WIKI:-8881}:8080"
     volumes:
       - "${DATEN:-./daten}/zim:/data"
     # Liest die Bibliotheksdatei und lädt sie automatisch neu, wenn ./nomad sie ändert.

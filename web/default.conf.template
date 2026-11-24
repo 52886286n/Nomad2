@@ -1,3 +1,4 @@
+# Startseite und Videos
 server {
     listen 80;
     root /usr/share/nginx/html;
@@ -11,5 +12,25 @@ server {
         alias /medien/;
         autoindex on;
         autoindex_format json;
+    }
+}
+
+# Wikis: Kiwix läuft dahinter; hier wird nur das dunkle Design eingefügt
+server {
+    listen 8081;
+    resolver 127.0.0.11 valid=10s;
+
+    location /_nomad/ { alias /usr/share/nginx/html/; }
+
+    location / {
+        set $wiki http://wiki:8080;
+        proxy_pass $wiki;
+        proxy_set_header Host $http_host;
+        proxy_set_header Accept-Encoding "";
+        proxy_set_header If-None-Match "";
+        proxy_set_header If-Modified-Since "";
+        proxy_read_timeout 300s;
+        sub_filter '</head>' '<script src="/_nomad/thema.js"></script><link rel="stylesheet" href="/_nomad/wiki-dunkel.css"></head>';
+        sub_filter_once on;
     }
 }

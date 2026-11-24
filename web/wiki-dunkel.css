@@ -1,0 +1,16 @@
+/* Dunkles Design für die Wiki-Seiten: Farben umkehren, Bilder und Videos wieder zurückdrehen. */
+html.nomad-dunkel { background: #121212 !important; color-scheme: dark; }
+html.nomad-dunkel body { filter: invert(1) hue-rotate(180deg) contrast(.88); }
+html.nomad-dunkel img,
+html.nomad-dunkel video,
+html.nomad-dunkel canvas,
+html.nomad-dunkel iframe,
+html.nomad-dunkel embed,
+html.nomad-dunkel object,
+html.nomad-dunkel svg image { filter: invert(1) hue-rotate(180deg); }
+
+/* Kiwix-Rahmenseite: Der Artikel steckt in einem eigenen Rahmen und färbt sich selbst um.
+   Hier wird deshalb nur die Werkzeugleiste umgekehrt, sonst würden Bilder doppelt bearbeitet. */
+html.nomad-dunkel:has(body > iframe) body { filter: none; background: transparent !important; }
+html.nomad-dunkel:has(body > iframe) body > *:not(iframe) { filter: invert(1) hue-rotate(180deg) contrast(.88); }
+html.nomad-dunkel:has(body > iframe) body > iframe { filter: none; }
