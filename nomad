@@ -128,26 +128,60 @@ ytdlp() {
   else
     bin/yt-dlp -U >/dev/null 2>&1 || true
   fi
+  # YouTube braucht für alle Formate eine JavaScript-Laufzeit (deno); ohne sie geht es nur eingeschränkt.
+  if [ ! -x bin/deno ] && ! command -v deno >/dev/null; then
+    info "Lade deno herunter (Hilfsprogramm für YouTube)"
+    if curl -fL --retry 3 -o bin/deno.zip https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip \
+       && python3 -m zipfile -e bin/deno.zip bin/ && chmod +x bin/deno; then rm -f bin/deno.zip
+    else rm -f bin/deno.zip; rot "deno konnte nicht geladen werden – es geht ohne weiter, evtl. mit Einschränkungen."; fi
+  fi
+}
+
+# Liest inhalte/videos.txt und ruft für jede Quelle "$1" auf: laden | vorschau
+videos_durchgehen() {
+  local modus=$1 h=${VIDEO_HOEHE:-720} zeile thema="" anzahl quelle ordner ok=0
+  local -a extra
+  while IFS= read -r zeile || [ -n "$zeile" ]; do
+    zeile=$(printf '%s' "$zeile" | sed 's/\r$//; s/^[[:space:]]*//; s/[[:space:]]*$//')
+    case "$zeile" in
+      ''|'#'*) continue ;;
+      '['*']') thema=${zeile#[}; thema=${thema%]}; thema=${thema//\//-}; continue ;;
+    esac
+    anzahl=""
+    if [[ $zeile =~ ^(.*[^[:space:]])[[:space:]]+([0-9]+)$ ]]; then zeile=${BASH_REMATCH[1]}; anzahl=${BASH_REMATCH[2]}; fi
+    case "$zeile" in
+      http://*|https://*) quelle=$zeile; extra=(--playlist-end "${anzahl:-25}") ;;
+      *) quelle="ytsearch${anzahl:-5}:$zeile"; extra=() ;;
+    esac
+    ordner=${thema//%/%%}; ordner=${ordner:-%(channel,uploader|Sonstiges)s}
+    ok=1
+    if [ "$modus" = vorschau ]; then
+      printf '\n\033[32m[%s]\033[0m %s\n' "${thema:-ohne Thema}" "$zeile"
+      PATH="$PWD/bin:$PATH" bin/yt-dlp --ignore-errors --no-warnings --flat-playlist "${extra[@]}" \
+        --print "   %(title).90s  (%(channel,uploader|?)s, %(duration_string|?)s)" "$quelle" </dev/null || true
+      continue
+    fi
+    info "[${thema:-ohne Thema}] $zeile"
+    PATH="$PWD/bin:$PATH" bin/yt-dlp --ignore-errors --no-overwrites --no-warnings \
+      --download-archive "$VID/.archiv.txt" "${extra[@]}" \
+      --match-filter "!is_live & duration>=120 & duration<=7200" \
+      --sleep-requests 1 --sleep-interval 2 --max-sleep-interval 6 \
+      -S "res:$h,vcodec:h264,acodec:m4a" --merge-output-format mp4 \
+      --embed-metadata --write-thumbnail --convert-thumbnails jpg \
+      -o "$VID/$ordner/%(upload_date>%Y-%m-%d,release_date>%Y-%m-%d|)s %(title).100B ~ %(channel,uploader|Unbekannt).40B [%(id)s].%(ext)s" \
+      "$quelle" </dev/null || rot "Nicht alles zu „$zeile“ konnte geladen werden."
+  done < "$QUELLEN"
+  [ $ok = 1 ] || ende "Keine Quellen eingetragen. Trage Themen oder Adressen in $QUELLEN ein."
 }
 
 videos_laden() {
   braucht curl curl; braucht ffmpeg ffmpeg; ordner; ytdlp
-  local h=${VIDEO_HOEHE:-720} url anzahl ok=0
-  while read -r url anzahl _; do
-    case "$url" in ''|'#'*) continue;; esac
-    ok=1
-    info "Lade Videos von $url (höchstens ${anzahl:-25})"
-    bin/yt-dlp --ignore-errors --no-overwrites \
-      --download-archive "$VID/.archiv.txt" \
-      --playlist-end "${anzahl:-25}" \
-      -S "res:$h,vcodec:h264,acodec:m4a" --merge-output-format mp4 \
-      --embed-metadata --write-thumbnail --convert-thumbnails jpg \
-      -o "$VID/%(channel,uploader|Sonstiges)s/%(upload_date>%Y-%m-%d,release_date>%Y-%m-%d|)s %(title).120B [%(id)s].%(ext)s" \
-      "$url" </dev/null || rot "Nicht alles von $url konnte geladen werden."
-  done < "$QUELLEN"
-  [ $ok = 1 ] || ende "Keine Quellen eingetragen. Trage Adressen in $QUELLEN ein."
+  videos_durchgehen laden
   info "Fertig. Videos: http://localhost:${PORT_START:-8880}/videos"
+  du -sh "$VID" 2>/dev/null || true
 }
+
+videos_vorschau() { braucht curl curl; ordner; ytdlp; videos_durchgehen vorschau; }
 
 status() {
   docker compose ps 2>/dev/null || true
@@ -172,6 +206,7 @@ Nomad2 – Offline-Wissen auf Deutsch
   ./nomad wiki aktualisieren       installierte Pakete auf die neueste Ausgabe bringen
   ./nomad wiki entfernen <name>    Paket löschen
 
+  ./nomad videos vorschau          zeigt, welche Videos gefunden würden (lädt nichts)
   ./nomad videos laden             Videos aus inhalte/videos.txt herunterladen
 
   ./nomad speicher [<ordner>]      Speicherort anzeigen oder ändern (z. B. externe Platte)
@@ -191,6 +226,6 @@ case "${1:-hilfe}" in
             entfernen) shift 2; wiki_entfernen "$@" ;;
             *) hilfe ;;
           esac ;;
-  videos) case "${2:-laden}" in laden) videos_laden ;; *) hilfe ;; esac ;;
+  videos) case "${2:-laden}" in laden) videos_laden ;; vorschau) videos_vorschau ;; *) hilfe ;; esac ;;
   *)      hilfe ;;
 esac

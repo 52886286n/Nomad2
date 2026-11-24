@@ -57,9 +57,20 @@ Pakete trägst du als Zeile in `inhalte/katalog.txt` ein.
 
 ## Deutsche Videos
 
-1. Adressen in `inhalte/videos.txt` eintragen (YouTube-Kanäle/-Playlists, ARD-/ZDF-/arte-Mediathek).
-2. `./nomad videos laden` – lädt nur, was noch fehlt, sortiert nach Kanal.
-3. http://localhost:8880/videos öffnen: Suche, Kanalfilter und Player direkt im Browser.
+In `inhalte/videos.txt` steht, was geladen wird – nach Themen sortiert. Mitgeliefert ist eine
+Liste für Krisenvorsorge (Pilze, essbare Wildpflanzen, Wasser, Unterschlupf, Feuer, Stromausfall,
+Vorrat, Erste Hilfe, Krisenfall, Orientierung, Selbstversorgung). Eine Zeile ist entweder ein
+Suchbegriff (lädt die besten YouTube-Treffer) oder eine Adresse (Kanal, Playlist, Mediathek).
+
+```bash
+./nomad videos vorschau   # zeigt, welche Videos gefunden würden – lädt nichts
+./nomad videos laden      # lädt alles, was noch fehlt
+```
+
+Danach http://localhost:8880/videos öffnen: Suche, Themenfilter und Player direkt im Browser.
+
+Die Suchtreffer wählt YouTube aus, nicht ein Fachmensch. Gerade bei Pilzen und Wildpflanzen
+gilt: Videos ersetzen kein Bestimmungsbuch und keine Pilzberatung – im Zweifel nicht essen.
 
 Eigene Videodateien (MP4) kannst du einfach in einen Unterordner von `daten/videos/` legen,
 sie erscheinen sofort auf der Videoseite.

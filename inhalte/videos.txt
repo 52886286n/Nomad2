@@ -1,8 +1,98 @@
-# Video-Quellen – eine Adresse pro Zeile, dann:  ./nomad videos laden
-# Möglich sind YouTube-Kanäle, -Playlists und einzelne Videos sowie Sendungen
-# aus ARD-/ZDF-/arte-Mediathek (alles, was yt-dlp unterstützt).
-# Optional dahinter die Zahl der neuesten Videos, die geladen werden sollen (Standard: 25).
+# Video-Quellen für  ./nomad videos laden   (vorher ansehen: ./nomad videos vorschau)
 #
-# Beispiele (das # am Zeilenanfang entfernen):
-# https://www.youtube.com/@KurzgesagtDE/videos 50
-# https://www.youtube.com/@MrWissen2go/videos 30
+# [Thema]            Überschrift – alle folgenden Zeilen landen in diesem Themenordner
+# Suchbegriffe       lädt die besten YouTube-Treffer zu dieser Suche (Standard: 5)
+# https://...        lädt einen Kanal, eine Playlist, ein einzelnes Video oder eine Mediathek-Sendung
+# Zahl am Zeilenende = wie viele Videos (z. B. "Feuer machen ohne Feuerzeug 8")
+#
+# Zeilen kannst du frei ändern, löschen oder ergänzen. Schon geladene Videos werden nicht erneut geladen.
+
+[Pilze]
+essbare Pilze erkennen für Anfänger
+giftige Pilze und ihre Doppelgänger erkennen
+Knollenblätterpilz erkennen Verwechslung
+Steinpilz Marone Pfifferling sicher bestimmen
+Pilze sammeln Regeln und Tipps
+Pilze haltbar machen trocknen
+
+[Essbare Wildpflanzen]
+essbare Wildpflanzen erkennen Deutschland
+essbare Wildkräuter im Frühling sammeln
+essbare Wildpflanzen im Herbst und Winter
+giftige Pflanzen Deutschland Verwechslungsgefahr
+essbare Beeren und Nüsse im Wald erkennen
+Notnahrung aus der Natur Survival
+Brennnessel Löwenzahn Giersch zubereiten
+
+[Wasser]
+Wasser filtern und trinkbar machen Survival
+Trinkwasser entkeimen abkochen Notfall
+Trinkwasser finden in der Natur
+Wasservorrat anlegen und lagern Notfall
+Regenwasser sammeln und aufbereiten
+
+[Unterschlupf und Überdachung]
+Notunterkunft im Wald bauen
+Laubhütte bauen Survival Anleitung
+Tarp aufbauen Varianten Anleitung
+Biwak im Winter warm bleiben
+Überleben bei Kälte Unterkühlung vermeiden
+
+[Feuer und Wärme]
+Feuer machen ohne Feuerzeug
+Feuer machen bei Nässe und Regen
+Feuerstahl richtig benutzen Zunder
+Heizen ohne Strom Wohnung Notfall
+Kochen ohne Strom Notfall
+
+[Stromausfall und Blackout]
+Blackout Vorbereitung Checkliste
+Stromausfall was tun richtig verhalten
+Notstrom für zu Hause Powerstation Solar
+Licht ohne Strom Notbeleuchtung
+Kurbelradio Notfallradio Informationen ohne Strom
+
+[Vorrat und Haltbarmachen]
+Notvorrat anlegen Liste Bundesamt Bevölkerungsschutz
+Lebensmittel lange lagern Vorratshaltung
+Einkochen für Anfänger Anleitung
+Fermentieren für Anfänger Sauerkraut
+Brot backen ohne Strom ohne Ofen
+Lebensmittel dörren und räuchern
+
+[Erste Hilfe und Gesundheit]
+Erste Hilfe Grundlagen Kurs
+Herzdruckmassage und stabile Seitenlage Anleitung
+starke Blutung stoppen Druckverband Tourniquet
+Wunden versorgen ohne Arzt outdoor
+Knochenbruch Verstauchung Erste Hilfe schienen
+Hausapotheke Notfallvorsorge
+Hygiene ohne fließendes Wasser Nottoilette
+
+[Krise, Krieg und Sicherheit]
+Bevölkerungsschutz richtiges Verhalten im Krisenfall
+Sirenensignale Bedeutung Warnung der Bevölkerung
+Fluchtrucksack Notgepäck packen
+Verhalten bei Luftalarm und Beschuss Zivilschutz
+Schutzraum Keller vorbereiten Zivilschutz
+atomarer Notfall richtiges Verhalten Strahlenschutz
+Evakuierung vorbereiten Dokumentenmappe
+Zivilschutz Deutschland Ratgeber Notfallvorsorge
+
+[Orientierung und Kommunikation]
+Karte und Kompass Orientierung lernen
+Orientierung ohne Kompass Sonne Sterne
+Funken im Notfall PMR Amateurfunk Krisenfall
+wichtigste Knoten lernen Outdoor
+
+[Selbstversorgung]
+Gemüse anbauen für Anfänger Selbstversorger
+Kartoffeln anbauen Anleitung
+Saatgut selbst gewinnen
+Hühner halten für Anfänger
+Angeln lernen Grundlagen Anfänger
+
+[Werkzeug und Ausrüstung]
+Messer schärfen Anleitung
+Axt und Säge sicher benutzen Holz machen
+Survival Ausrüstung Grundausstattung
