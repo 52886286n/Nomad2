@@ -92,7 +92,7 @@ wiki_laden() {
     wget -c --tries=20 --show-progress -q -O "$ZIM/$datei.teil" "$SPIEGEL/$o/$datei"
     mv "$ZIM/$datei.teil" "$ZIM/$datei"
     # ältere Ausgaben desselben Pakets entfernen
-    lokal "$p" | grep -vF "/$datei" | xargs -r rm -f
+    lokal "$p" | { grep -vF "/$datei" || true; } | xargs -r rm -f
   done
   bibliothek
   info "Fertig. Wikis: http://localhost:${PORT_WIKI:-8881}"
