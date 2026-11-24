@@ -1,0 +1,34 @@
+name: nomad2
+
+services:
+  start:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "${PORT_START:-8880}:80"
+    environment:
+      PORT_WIKI: "${PORT_WIKI:-8881}"
+      PORT_VIDEOS: "${PORT_VIDEOS:-8096}"
+    volumes:
+      - ./web/index.html:/usr/share/nginx/html/index.html:ro
+      - ./web/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+
+  wiki:
+    image: ghcr.io/kiwix/kiwix-tools:latest
+    restart: unless-stopped
+    ports:
+      - "${PORT_WIKI:-8881}:8080"
+    volumes:
+      - "${DATEN:-./daten}/zim:/data"
+    # Liest die Bibliotheksdatei und lädt sie automatisch neu, wenn ./nomad sie ändert.
+    command: ["kiwix-serve", "--port", "8080", "--library", "--monitorLibrary", "/data/library.xml"]
+
+  videos:
+    image: jellyfin/jellyfin:latest
+    restart: unless-stopped
+    ports:
+      - "${PORT_VIDEOS:-8096}:8096"
+    volumes:
+      - "${DATEN:-./daten}/jellyfin/config:/config"
+      - "${DATEN:-./daten}/jellyfin/cache:/cache"
+      - "${DATEN:-./daten}/videos:/media/videos:ro"

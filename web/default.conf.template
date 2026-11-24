@@ -1,0 +1,6 @@
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    location = /wiki   { return 302 http://$host:${PORT_WIKI}/; }
+    location = /videos { return 302 http://$host:${PORT_VIDEOS}/; }
+}

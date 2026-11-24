@@ -1,0 +1,8 @@
+# Video-Quellen – eine Adresse pro Zeile, dann:  ./nomad videos laden
+# Möglich sind YouTube-Kanäle, -Playlists und einzelne Videos sowie Sendungen
+# aus ARD-/ZDF-/arte-Mediathek (alles, was yt-dlp unterstützt).
+# Optional dahinter die Zahl der neuesten Videos, die geladen werden sollen (Standard: 25).
+#
+# Beispiele (das # am Zeilenanfang entfernen):
+# https://www.youtube.com/@KurzgesagtDE/videos 50
+# https://www.youtube.com/@MrWissen2go/videos 30

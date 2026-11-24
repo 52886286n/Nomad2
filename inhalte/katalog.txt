@@ -1,0 +1,25 @@
+# Deutsche Wiki-Pakete von download.kiwix.org
+# Format:  Name | Ordner | Dateipräfix | ca. Größe | Beschreibung
+# Die jeweils neueste Ausgabe wird automatisch ermittelt.
+# Eigene Zeilen kannst du einfach ergänzen (Dateiliste: https://download.kiwix.org/zim/).
+wikipedia        | wikipedia      | wikipedia_de_all_maxi         | 45 GB  | Wikipedia komplett, mit Bildern
+wikipedia-nopic  | wikipedia      | wikipedia_de_all_nopic        | 17 GB  | Wikipedia komplett, ohne Bilder
+wikipedia-mini   | wikipedia      | wikipedia_de_all_mini         | 4,4 GB | Wikipedia, nur Einleitungen aller Artikel
+wikipedia-top    | wikipedia      | wikipedia_de_top_maxi         | 4,2 GB | Die wichtigsten Wikipedia-Artikel, mit Bildern
+medizin          | wikipedia      | wikipedia_de_medicine_maxi    | 402 MB | Wikipedia: Medizin
+geschichte       | wikipedia      | wikipedia_de_history_maxi     | 698 MB | Wikipedia: Geschichte
+geografie        | wikipedia      | wikipedia_de_geography_maxi   | 344 MB | Wikipedia: Geografie
+mathematik       | wikipedia      | wikipedia_de_mathematics_maxi | 287 MB | Wikipedia: Mathematik
+physik           | wikipedia      | wikipedia_de_physics_maxi     | 287 MB | Wikipedia: Physik
+chemie           | wikipedia      | wikipedia_de_chemistry_maxi   | 132 MB | Wikipedia: Chemie
+computer         | wikipedia      | wikipedia_de_computer_maxi    | 250 MB | Wikipedia: Computer
+klexikon         | other          | klexikon_de_all_maxi          | 129 MB | Klexikon – Lexikon für Kinder
+wiktionary       | wiktionary     | wiktionary_de_all_nopic       | 1,2 GB | Wörterbuch
+wikivoyage       | wikivoyage     | wikivoyage_de_all_maxi        | 1,0 GB | Reiseführer
+wikibooks        | wikibooks      | wikibooks_de_all_maxi         | 3,1 GB | Lehrbücher und Anleitungen
+wikiversity      | wikiversity    | wikiversity_de_all_maxi       | 1,1 GB | Kurse und Lernmaterial
+wikisource       | wikisource     | wikisource_de_all_maxi        | 2,4 GB | Historische Quellentexte
+wikiquote        | wikiquote      | wikiquote_de_all_maxi         | 44 MB  | Zitate
+kochwiki         | other          | kochwiki.org_de_all_maxi      | 71 MB  | Rezepte
+gutenberg        | gutenberg      | gutenberg_de_all              | 10 GB  | Gemeinfreie deutsche Bücher (Project Gutenberg)
+german-se        | stack_exchange | german.stackexchange.com_mul_all | 114 MB | Fragen & Antworten zur deutschen Sprache
